@@ -534,6 +534,24 @@
   .urgency h2{ font-family: var(--font-display); font-weight:800; font-size: clamp(26px,4.6vw,42px); max-width: 18ch; margin: 0 auto 16px; }
   .urgency p{ color:#d4d4dc; max-width: 50ch; margin: 0 auto 34px; font-size:16px; line-height:1.6; }
 
+  /* ---------- live counter ---------- */
+  .live-counter{
+    display:inline-flex; align-items:center; gap:10px;
+    font-family: var(--font-mono); font-size: 13px; letter-spacing:0.05em;
+    color: var(--dim);
+    background: var(--panel); border:1px solid var(--panel-line);
+    padding: 12px 20px; border-radius: 999px; margin-bottom: 22px;
+  }
+  .live-counter .lc-dot{
+    width:8px; height:8px; border-radius:50%; background: var(--green);
+    box-shadow: 0 0 10px var(--green); flex-shrink:0;
+    animation: pulse-dot 1.8s ease-in-out infinite;
+  }
+  .live-counter strong{
+    font-family: var(--font-display); font-weight:900; font-size: 18px;
+    color: var(--yellow); letter-spacing:0;
+  }
+
   /* ---------- register ---------- */
   .register-panel{
     background: var(--panel); border: 1px solid var(--panel-line); border-radius: 22px;
@@ -944,6 +962,10 @@
   <section class="section-pad urgency">
     <div class="wrap">
       <span class="urgency-badge reveal">⚠ LIMITED SLOTS AVAILABLE</span>
+      <div class="live-counter reveal" id="liveCounter" aria-live="polite">
+        <span class="lc-dot" aria-hidden="true"></span>
+        <span><strong id="liveCountNum">—</strong> already locked in their seat</span>
+      </div>
       <h2 class="reveal">Seats are capped to keep the room competitive.</h2>
       <p class="reveal">Kept small on purpose. Once it fills, it's closed.</p>
       <a href="https://forms.gle/7Mmg1L92K9Ec6dGe6" target="_blank" rel="noopener noreferrer" class="btn-register reveal">
@@ -1255,6 +1277,41 @@
     });
 
     setTimeout(openPopup, 1800);
+  })();
+
+  // Live registration counter — pulls a padded count from the Apps Script endpoint
+  (function(){
+    var COUNTER_URL = 'https://script.google.com/macros/s/AKfycbzo4H0RdATNPbHZ-gueBeR2Mc2BVwhJ7mdIAVRn-_eJdj8PAEu0t_pRvY9zIwBNPys/exec'; // ends in /exec
+    var numEl = document.getElementById('liveCountNum');
+    var wrapEl = document.getElementById('liveCounter');
+    if(!numEl || !wrapEl) return;
+
+    function animateCount(target){
+      var start = 0;
+      var duration = 900;
+      var startTime = null;
+      function step(ts){
+        if(startTime === null) startTime = ts;
+        var progress = Math.min((ts - startTime) / duration, 1);
+        var eased = 1 - Math.pow(1 - progress, 3);
+        numEl.textContent = Math.floor(start + (target - start) * eased);
+        if(progress < 1) requestAnimationFrame(step);
+        else numEl.textContent = target;
+      }
+      requestAnimationFrame(step);
+    }
+
+    fetch(COUNTER_URL)
+      .then(function(res){ return res.json(); })
+      .then(function(data){
+        var count = parseInt(data.count, 10);
+        if(isNaN(count)) throw new Error('bad count');
+        animateCount(count);
+      })
+      .catch(function(){
+        // Endpoint not set up yet or unreachable — hide the counter rather than show a broken state
+        wrapEl.style.display = 'none';
+      });
   })();
 
   // QR code — points to the exact official registration form

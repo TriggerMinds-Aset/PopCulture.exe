@@ -646,18 +646,38 @@
   }
 
   /* ---------- floating register button ---------- */
-  .float-register{
+  .float-register-wrap{
     position: fixed; right: 20px; bottom: 20px; z-index: 150;
+    display:flex; flex-direction:column; align-items:center; gap:10px;
+    opacity:0; transform: translateY(16px) scale(0.92); pointer-events:none;
+    transition: opacity .25s ease, transform .25s ease;
+  }
+  .float-register-wrap.is-visible{ opacity:1; transform: translateY(0) scale(1); pointer-events:auto; }
+
+  .float-counter{
+    display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
+    font-family: var(--font-mono); font-weight:700; font-size: 11.5px; letter-spacing:0.04em;
+    color:#050505; background: var(--yellow);
+    padding: 8px 14px; border-radius: 999px;
+    box-shadow: 0 6px 20px rgba(255,230,0,0.4);
+    animation: badge-breathe 2.4s ease-in-out infinite;
+  }
+  .float-counter .fc-dot{
+    width:6px; height:6px; border-radius:50%; background:#050505; opacity:0.55;
+    animation: pulse-dot 1.8s ease-in-out infinite;
+  }
+  .float-counter strong{ font-size:12.5px; }
+
+  .float-register{
+    position:relative;
     display:inline-flex; align-items:center; gap:9px;
     font-family: var(--font-ui); font-weight:700; font-size: 14.5px;
     color:#050505;
     background: linear-gradient(100deg, var(--pink), var(--cyan));
     padding: 15px 22px; border-radius: 999px; border:none;
     box-shadow: 0 0 0 1px rgba(255,255,255,0.1), 0 10px 30px rgba(255,46,198,0.35);
-    opacity:0; transform: translateY(16px) scale(0.9); pointer-events:none;
-    transition: opacity .25s ease, transform .25s ease;
+    transition: transform .15s ease;
   }
-  .float-register.is-visible{ opacity:1; transform: translateY(0) scale(1); pointer-events:auto; }
   .float-register:hover, .float-register:focus-visible{
     transform: translateY(-3px) rotate(-1.5deg) scale(1.03);
   }
@@ -674,7 +694,9 @@
     100%{ transform: scale(1.35); opacity:0; }
   }
   @media (max-width: 640px){
-    .float-register{ right:14px; bottom:14px; padding:13px 18px; font-size:13.5px; }
+    .float-register-wrap{ right:14px; bottom:14px; gap:8px; }
+    .float-register{ padding:13px 18px; font-size:13.5px; }
+    .float-counter{ font-size:10.5px; padding:7px 12px; }
   }
 
   /* ---------- countdown popup ---------- */
@@ -861,6 +883,11 @@
         <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-6.2 7-11a7 7 0 10-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>VENUE: TO BE ANNOUNCED</span>
       </div>
 
+      <div class="live-counter hero-counter reveal">
+        <span class="lc-dot" aria-hidden="true"></span>
+        <span><strong class="live-count-num">—</strong> already locked in their seat</span>
+      </div>
+
       <div class="cta-row">
         <a href="https://forms.gle/7Mmg1L92K9Ec6dGe6" target="_blank" rel="noopener noreferrer" class="btn-register">
           REGISTER NOW
@@ -964,7 +991,7 @@
       <span class="urgency-badge reveal">⚠ LIMITED SLOTS AVAILABLE</span>
       <div class="live-counter reveal" id="liveCounter" aria-live="polite">
         <span class="lc-dot" aria-hidden="true"></span>
-        <span><strong id="liveCountNum">—</strong> already locked in their seat</span>
+        <span><strong class="live-count-num">—</strong> already locked in their seat</span>
       </div>
       <h2 class="reveal">Seats are capped to keep the room competitive.</h2>
       <p class="reveal">Kept small on purpose. Once it fills, it's closed.</p>
@@ -1042,12 +1069,18 @@
   </div>
 </footer>
 
-<!-- FLOATING REGISTER BUTTON -->
-<a href="https://forms.gle/7Mmg1L92K9Ec6dGe6" target="_blank" rel="noopener noreferrer" class="float-register" id="floatRegister">
-  <span class="ring" aria-hidden="true"></span>
-  REGISTER
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-</a>
+<!-- FLOATING REGISTER BUTTON + LIVE COUNTER -->
+<div class="float-register-wrap" id="floatRegisterWrap">
+  <div class="float-counter" aria-live="polite">
+    <span class="fc-dot" aria-hidden="true"></span>
+    <strong class="live-count-num">—</strong> REGISTERED
+  </div>
+  <a href="https://forms.gle/7Mmg1L92K9Ec6dGe6" target="_blank" rel="noopener noreferrer" class="float-register" id="floatRegister">
+    <span class="ring" aria-hidden="true"></span>
+    REGISTER
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+  </a>
+</div>
 
 <!-- FLOATING PERKS BUTTON -->
 <button type="button" class="float-perks" id="floatPerksBtn" aria-haspopup="dialog" aria-controls="perksOverlay">
@@ -1184,15 +1217,15 @@
     }, 55);
   })();
 
-  // Floating register button — appears once the hero is scrolled past
+  // Floating register button + counter — appear once the hero is scrolled past
   (function(){
-    var btn = document.getElementById('floatRegister');
+    var wrap = document.getElementById('floatRegisterWrap');
     var hero = document.getElementById('top');
-    if(!btn || !hero) return;
-    if(!('IntersectionObserver' in window)){ btn.classList.add('is-visible'); return; }
+    if(!wrap || !hero) return;
+    if(!('IntersectionObserver' in window)){ wrap.classList.add('is-visible'); return; }
     var io = new IntersectionObserver(function(entries){
       entries.forEach(function(entry){
-        btn.classList.toggle('is-visible', !entry.isIntersecting);
+        wrap.classList.toggle('is-visible', !entry.isIntersecting);
       });
     }, { threshold: 0.1 });
     io.observe(hero);
@@ -1280,11 +1313,12 @@
   })();
 
   // Live registration counter — pulls a padded count from the Apps Script endpoint
+  // Drives every instance on the page: hero, urgency section, and the floating badge.
   (function(){
     var COUNTER_URL = 'https://script.google.com/macros/s/AKfycbxe4627hhRRAa5PcirPWf30G0U0DA5TyYrLdamdnQu_6Iolo8iisXrZK79eEE2Duqls/exec'; // ends in /exec
-    var numEl = document.getElementById('liveCountNum');
-    var wrapEl = document.getElementById('liveCounter');
-    if(!numEl || !wrapEl) return;
+    var FALLBACK_COUNT = 20; // shown if the endpoint isn't reachable, so the badge is never blank
+    var numEls = document.querySelectorAll('.live-count-num');
+    if(!numEls.length) return;
 
     function animateCount(target){
       var start = 0;
@@ -1294,23 +1328,34 @@
         if(startTime === null) startTime = ts;
         var progress = Math.min((ts - startTime) / duration, 1);
         var eased = 1 - Math.pow(1 - progress, 3);
-        numEl.textContent = Math.floor(start + (target - start) * eased);
+        var value = Math.floor(start + (target - start) * eased);
+        numEls.forEach(function(el){ el.textContent = (progress < 1) ? value : target; });
         if(progress < 1) requestAnimationFrame(step);
-        else numEl.textContent = target;
       }
       requestAnimationFrame(step);
     }
 
+    if(COUNTER_URL.indexOf('PASTE_YOUR') === 0){
+      console.warn('[TriggerMind] COUNTER_URL is still the placeholder — paste your Apps Script /exec URL in.');
+      animateCount(FALLBACK_COUNT);
+      return;
+    }
+
     fetch(COUNTER_URL)
-      .then(function(res){ return res.json(); })
+      .then(function(res){
+        if(!res.ok) throw new Error('HTTP ' + res.status);
+        return res.json();
+      })
       .then(function(data){
         var count = parseInt(data.count, 10);
-        if(isNaN(count)) throw new Error('bad count');
+        if(isNaN(count)) throw new Error('Response had no numeric "count" field: ' + JSON.stringify(data));
         animateCount(count);
       })
-      .catch(function(){
-        // Endpoint not set up yet or unreachable — hide the counter rather than show a broken state
-        wrapEl.style.display = 'none';
+      .catch(function(err){
+        // Log the real reason so it's debuggable in the browser console (F12 → Console),
+        // but still show a safe fallback number instead of a blank/hidden badge.
+        console.error('[TriggerMind] Live counter fetch failed:', err);
+        animateCount(FALLBACK_COUNT);
       });
   })();
 

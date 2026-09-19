@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TRIGGER MIND — Student Club</title>
+<meta name="description" content="TRIGGER MIND is a student club for technology, creativity, events, competitions and community.">
+
+<link rel="icon" href="assets/logo.png" type="image/png">
+<link rel="apple-touch-icon" href="assets/logo.png">
+<meta property="og:title" content="TRIGGER MIND — Student Club">
+<meta property="og:description" content="Think × Create × Connect.">
+<meta property="og:image" content="assets/logo.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg: #050505;
+    --panel: #0c0c0f;
+    --panel-line: #1c1c22;
+    --pink: #ff2ec6;
+    --cyan: #22f2ff;
+    --green: #b6ff2e;
+    --yellow: #ffe600;
+    --white: #f4f4f2;
+    --dim: #9a9aa3;
+
+    --font-display: 'Unbounded', sans-serif;
+    --font-ui: 'Space Grotesk', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+
+    --nav-h: 68px;
+  }
+
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior: auto; }
+    *, *::before, *::after{ animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+  }
+
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--white);
+    font-family: var(--font-ui);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection{ background: var(--pink); color: #050505; }
+
+  a{ color: inherit; text-decoration: none; }
+  button{ font-family: inherit; cursor: pointer; }
+
+  img, svg{ display:block; max-width:100%; }
+
+  .visually-hidden{
+    position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+    overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
+  }
+
+  .skip-link{
+    position:absolute; left:12px; top:-60px; z-index:200;
+    background: var(--yellow); color:#050505; padding:10px 16px;
+    font-family: var(--font-mono); font-weight:700; border-radius:4px;
+    transition: top .2s ease;
+  }
+  .skip-link:focus{ top:12px; }
+
+  :focus-visible{
+    outline: 3px solid var(--cyan);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  .wrap{
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ---------- background texture ---------- */
+  .grain{
+    position: fixed; inset:0; pointer-events:none; z-index: 1;
+    opacity: 0.05; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+
+  /* ---------- nav ---------- */
+  header.site-nav{
+    position: sticky; top:0; z-index: 100;
+    height: var(--nav-h);
+    display:flex; align-items:center;
+    background: rgba(5,5,5,0.82);
+    backdrop-filter: blur(10px) saturate(140%);
+    border-bottom: 1px solid var(--panel-line);
+  }
+  .nav-inner{
+    width:100%;
+    display:flex; align-items:center; justify-content:space-between;
+    max-width: 1180px; margin:0 auto; padding: 0 24px;
+  }
+  .brand{
+    display:flex; align-items:center; gap:10px;
+    font-family: var(--font-mono); font-weight:700; font-size: 15px;
+    letter-spacing: 0.02em;
+  }
+  .brand-mark{
+    width:26px; height:26px; border-radius:6px;
+    background: linear-gradient(135deg, var(--pink), var(--cyan));
+    display:flex; align-items:center; justify-content:center;
+    font-family: var(--font-mono); font-weight:700; font-size: 13px; color:#050505;
+  }
+  .brand small{ color: var(--dim); font-weight:400; }
+
+  /* ---------- club logo ---------- */
+  .brand-logo{
+    height: 34px; width:auto; max-width: 110px;
+    object-fit: contain;
+    border-radius: 6px;
+    transition: transform .25s ease, filter .25s ease;
+  }
+  .brand:hover .brand-logo{ transform: scale(1.06); filter: drop-shadow(0 0 10px rgba(255,230,0,.35)); }
+  .brand-logo[hidden]{ display:none; }
+
+  .footer-logo{
+    height: 30px; width:auto; max-width: 96px;
+    object-fit: contain; opacity:.75;
+    transition: opacity .25s ease;
+  }
+  .footer-logo:hover{ opacity:1; }
+  .footer-brand{ display:flex; align-items:center; gap:12px; }
+
+  @media (max-width: 560px){
+    .brand-logo{ height: 28px; max-width: 88px; }
+  }
+
+  nav.primary-links{ display:flex; align-items:center; gap: 2px; }
+  nav.primary-links a{
+    font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.06em;
+    color: var(--dim); padding: 9px 14px; border-radius: 6px;
+    transition: color .15s ease, background-color .15s ease;
+  }
+  nav.primary-links a:hover, nav.primary-links a:focus-visible{
+    color: var(--white); background: rgba(255,255,255,0.05);
+  }
+  .nav-register{
+    margin-left: 6px;
+    font-weight: 700 !important;
+    color: #050505 !important;
+    background: var(--pink) !important;
+    box-shadow: 0 0 0 1px rgba(255,46,198,0.5), 0 0 22px rgba(255,46,198,0.35);
+  }
+  .nav-register:hover, .nav-register:focus-visible{
+    background: var(--yellow) !important;
+    box-shadow: 0 0 0 1px rgba(255,230,0,0.6), 0 0 26px rgba(255,230,0,0.4);
+    color:#050505 !important;
+  }
+
+  .menu-toggle{
+    display:none; background:none; border: 1px solid var(--panel-line);
+    border-radius: 8px; width: 42px; height:42px;
+    color: var(--white); align-items:center; justify-content:center;
+    flex-direction: column; gap:4px;
+  }
+  .menu-toggle span{ display:block; width:18px; height:2px; background: var(--white); transition: transform .2s ease, opacity .2s ease; }
+  .menu-toggle[aria-expanded="true"] span:nth-child(1){ transform: translateY(6px) rotate(45deg); }
+  .menu-toggle[aria-expanded="true"] span:nth-child(2){ opacity:0; }
+  .menu-toggle[aria-expanded="true"] span:nth-child(3){ transform: translateY(-6px) rotate(-45deg); }
+
+  .mobile-panel{
+    position: fixed; top: var(--nav-h); left:0; right:0; bottom:0;
+    background: rgba(5,5,5,0.98); z-index: 99;
+    display:flex; flex-direction:column; align-items:stretch;
+    padding: 18px 24px 30px;
+    transform: translateY(-8px);
+    opacity:0; pointer-events:none;
+    transition: opacity .18s ease, transform .18s ease;
+    border-top: 1px solid var(--panel-line);
+  }
+  .mobile-panel.open{ opacity:1; pointer-events:auto; transform: translateY(0); }
+  .mobile-panel a{
+    font-family: var(--font-mono); font-size: 17px; padding: 16px 4px;
+    border-bottom: 1px solid var(--panel-line); color: var(--white);
+  }
+  .mobile-panel .nav-register{
+    margin-top: 16px; text-align:center; border-radius: 10px; padding: 16px;
+    border-bottom:none; font-size:15px;
+  }
+
+  @media (max-width: 860px){
+    nav.primary-links{ display:none; }
+    .menu-toggle{ display:flex; }
+  }
+
+  /* ---------- section scaffolding ---------- */
+  section{ position: relative; z-index: 2; }
+  .section-pad{ padding: 110px 0; }
+  @media (max-width: 640px){ .section-pad{ padding: 76px 0; } }
+
+  .eyebrow{
+    font-family: var(--font-mono); font-size: 12.5px; letter-spacing: 0.14em;
+    color: var(--cyan); margin: 0 0 18px;
+  }
+
+  h2.section-title{
+    font-family: var(--font-display); font-weight: 700;
+    font-size: clamp(30px, 4.4vw, 48px); line-height: 1.08; margin: 0 0 20px;
+    max-width: 14ch;
+  }
+
+  p.lede{
+    font-size: 17px; line-height: 1.65; color: #d4d4dc; max-width: 56ch; margin: 0;
+  }
+
+  /* ---------- hero ---------- */
+  .hero{
+    min-height: calc(100svh - var(--nav-h));
+    display:flex; align-items:center;
+    padding: 64px 0 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-glow-a, .hero-glow-b{
+    position:absolute; border-radius:50%; filter: blur(90px); z-index:0;
+  }
+  .hero-glow-a{ width:420px; height:420px; background: rgba(255,46,198,0.28); top:-120px; right:-100px; }
+  .hero-glow-b{ width:360px; height:360px; background: rgba(34,242,255,0.18); bottom:-140px; left:-80px; }
+
+  .hero-grid{ position:absolute; inset:0; z-index:0; opacity:0.35;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+    background-size: 42px 42px;
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, black 40%, transparent 85%);
+  }
+
+  .hero-inner{ position:relative; z-index:2; width:100%; }
+
+  .kicker-row{
+    display:flex; align-items:center; gap:10px; margin-bottom: 22px;
+    font-family: var(--font-mono); font-size: 12.5px; letter-spacing: 0.12em; color: var(--dim);
+  }
+  .kicker-row .dot{ width:7px; height:7px; border-radius:50%; background: var(--green); box-shadow: 0 0 10px var(--green); animation: pulse-dot 1.8s ease-in-out infinite; }
+  @keyframes pulse-dot{ 0%,100%{ opacity:1; } 50%{ opacity:0.35; } }
+
+  h1.hero-title{
+    font-family: var(--font-display); font-weight: 900;
+    font-size: clamp(48px, 10.5vw, 118px);
+    line-height: 0.94; letter-spacing: -0.01em;
+    margin: 0 0 10px;
+    color: var(--white);
+  }
+  h1.hero-title .lt{ opacity: 0; }
+
+  .hero-sub{
+    font-family: var(--font-display); font-weight: 700;
+    font-size: clamp(26px, 5.2vw, 52px); line-height: 1.05;
+    margin: 6px 0 22px;
+  }
+  .hero-sub .px{ color: var(--pink); }
+  .hero-sub .x{ color: var(--white); padding: 0 6px; }
+  .hero-sub .cx{
+    color: var(--cyan);
+    text-shadow: 0 0 18px rgba(34,242,255,0.55), 0 0 40px rgba(34,242,255,0.25);
+  }
+
+  .hero-tagline{
+    font-family: var(--font-mono); font-size: 14px; letter-spacing: 0.03em;
+    color: var(--yellow); background: rgba(255,230,0,0.08);
+    display:inline-block; padding: 8px 14px; border-radius: 6px;
+    border: 1px dashed rgba(255,230,0,0.4);
+    margin-bottom: 28px;
+  }
+
+  p.hero-desc{ max-width: 56ch; color:#d4d4dc; font-size:17px; line-height:1.6; margin: 0 0 34px; }
+
+  .meta-chips{ display:flex; flex-wrap:wrap; gap:10px; margin-bottom: 36px; }
+  .chip{
+    display:flex; align-items:center; gap:8px;
+    font-family: var(--font-mono); font-size: 13px; color: var(--white);
+    background: var(--panel); border: 1px solid var(--panel-line);
+    padding: 10px 14px; border-radius: 8px;
+  }
+  .chip svg{ width:15px; height:15px; flex-shrink:0; }
+
+  .cta-row{ display:flex; flex-wrap:wrap; align-items:center; gap:18px; }
+
+  .btn-register{
+    position: relative;
+    display:inline-flex; align-items:center; gap:10px;
+    font-family: var(--font-ui); font-weight:700; font-size: 16px;
+    color:#050505;
+    background: linear-gradient(100deg, var(--pink), var(--cyan));
+    padding: 17px 30px; border-radius: 10px; border:none;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.08), 0 10px 40px rgba(255,46,198,0.25);
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .btn-register:hover, .btn-register:focus-visible{
+    transform: translateY(-2px);
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.16), 0 14px 50px rgba(34,242,255,0.35);
+  }
+  .btn-register:active{ transform: translateY(0); }
+  .btn-register svg{ width:18px; height:18px; }
+
+  .btn-ghost{
+    font-family: var(--font-mono); font-size: 13.5px; color: var(--dim);
+    display:inline-flex; align-items:center; gap:8px;
+    border-bottom: 1px solid var(--panel-line); padding-bottom: 3px;
+    transition: color .15s ease, border-color .15s ease;
+  }
+  .btn-ghost:hover, .btn-ghost:focus-visible{ color: var(--white); border-color: var(--white); }
+
+  .scroll-cue{
+    position:absolute; left:24px; bottom:26px; z-index:2;
+    display:flex; align-items:center; gap:10px;
+    font-family: var(--font-mono); font-size: 11.5px; color: var(--dim); letter-spacing:0.1em;
+  }
+  .scroll-cue .line{ width:1px; height:34px; background: linear-gradient(var(--dim), transparent); animation: line-run 1.6s ease-in-out infinite; }
+  @keyframes line-run{ 0%{ transform: scaleY(0); transform-origin: top; } 50%{ transform: scaleY(1); transform-origin: top; } 51%{ transform-origin: bottom; } 100%{ transform: scaleY(0); transform-origin: bottom; } }
+  @media (max-width: 640px){ .scroll-cue{ display:none; } }
+
+  /* ---------- reveal on scroll ---------- */
+  .reveal{ opacity:0; transform: translateY(18px); transition: opacity .6s ease, transform .6s ease; }
+  .reveal.is-visible{ opacity:1; transform: translateY(0); }
+
+  /* ---------- marquee ---------- */
+  .marquee-band{
+    border-top: 1px solid var(--panel-line); border-bottom: 1px solid var(--panel-line);
+    background: var(--panel);
+    overflow: hidden; padding: 14px 0;
+  }
+  .marquee-track{ display:flex; width: max-content; animation: marquee 22s linear infinite; }
+  .marquee-track span{
+    font-family: var(--font-mono); font-weight:700; font-size: 13px; letter-spacing: 0.14em;
+    color: var(--dim); padding: 0 26px; white-space:nowrap;
+  }
+  .marquee-track span.hl{ color: var(--green); }
+  @keyframes marquee{ from{ transform: translateX(0); } to{ transform: translateX(-50%); } }
+
+  /* ---------- about ---------- */
+  .about-grid{ display:grid; grid-template-columns: 1.1fr 0.9fr; gap: 60px; align-items:start; }
+  @media (max-width: 860px){ .about-grid{ grid-template-columns: 1fr; gap: 36px; } }
+
+  .about-cards{ display:flex; flex-direction:column; gap:14px; }
+  .about-card{
+    background: var(--panel); border:1px solid var(--panel-line); border-radius: 12px;
+    padding: 20px 22px; display:flex; gap:16px; align-items:flex-start;
+  }
+  .about-card .ic{
+    width:38px; height:38px; border-radius:8px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    font-size:18px;
+  }
+  .about-card h3{ margin:0 0 6px; font-family: var(--font-ui); font-weight:700; font-size:16px; }
+  .about-card p{ margin:0; font-size:14.5px; color: var(--dim); line-height:1.55; }
+
+  .ic-pink{ background: rgba(255,46,198,0.12); color: var(--pink); }
+  .ic-cyan{ background: rgba(34,242,255,0.12); color: var(--cyan); }
+  .ic-green{ background: rgba(182,255,46,0.12); color: var(--green); }
+
+  /* ---------- rounds ---------- */
+  .rounds-list{ display:grid; grid-template-columns: 1fr 1fr; gap: 26px; margin-top: 48px; }
+  @media (max-width: 860px){ .rounds-list{ grid-template-columns: 1fr; } }
+
+  .round-card{
+    position:relative;
+    background: linear-gradient(180deg, var(--panel), #08080a);
+    border: 1px solid var(--panel-line);
+    border-radius: 16px; padding: 32px 28px;
+    overflow:hidden;
+  }
+  .round-card::before{
+    content:""; position:absolute; top:0; left:0; right:0; height:3px;
+  }
+  .round-card.r1::before{ background: linear-gradient(90deg, var(--pink), transparent); }
+  .round-card.r2::before{ background: linear-gradient(90deg, var(--cyan), transparent); }
+
+  .round-tag{
+    font-family: var(--font-mono); font-size:12px; letter-spacing:0.12em; color: var(--dim);
+    display:block; margin-bottom: 10px;
+  }
+  .round-num{
+    font-family: var(--font-display); font-weight:900; font-size: 46px; line-height:1;
+    margin-bottom: 14px;
+  }
+  .round-card.r1 .round-num{ color: var(--pink); }
+  .round-card.r2 .round-num{ color: var(--cyan); }
+
+  .round-card h3{ font-family: var(--font-ui); font-size: 23px; font-weight:700; margin: 0 0 12px; }
+  .round-card p{ color:#c9c9d1; font-size:15px; line-height:1.6; margin:0 0 18px; }
+
+  .round-tags{ display:flex; flex-wrap:wrap; gap:8px; }
+  .round-tags span{
+    font-family: var(--font-mono); font-size:11.5px; color: var(--white);
+    background: rgba(255,255,255,0.06); border: 1px solid var(--panel-line);
+    padding: 5px 10px; border-radius: 6px;
+  }
+
+  .round-connector{
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    margin: 10px 0; font-family: var(--font-mono); font-size:12px; color: var(--dim);
+    letter-spacing: 0.1em;
+  }
+
+  /* ---------- experience ---------- */
+  .exp-grid{ display:grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 44px; }
+  @media (max-width: 860px){ .exp-grid{ grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px){ .exp-grid{ grid-template-columns: 1fr; } }
+
+  .exp-card{
+    background: var(--panel); border: 1px solid var(--panel-line); border-radius:14px;
+    padding: 26px 22px; text-align:left;
+  }
+  .exp-card .big-ic{ font-size: 30px; margin-bottom: 16px; display:block; }
+  .exp-card h3{ font-size: 16.5px; margin: 0 0 8px; font-family: var(--font-ui); font-weight:700; }
+  .exp-card p{ font-size: 14px; color: var(--dim); line-height:1.6; margin:0; }
+  .exp-card.hl{ border-color: rgba(182,255,46,0.35); box-shadow: 0 0 0 1px rgba(182,255,46,0.08) inset; }
+
+  /* ---------- urgency ---------- */
+  .urgency{
+    background: radial-gradient(ellipse 60% 80% at 50% 0%, rgba(255,46,198,0.14), transparent 70%), var(--bg);
+    border-top: 1px solid var(--panel-line);
+    border-bottom: 1px solid var(--panel-line);
+    text-align:center;
+  }
+  .urgency-badge{
+    display:inline-flex; align-items:center; gap:10px;
+    font-family: var(--font-mono); font-weight:700; font-size: 14px; letter-spacing:0.08em;
+    color: #050505; background: var(--yellow);
+    padding: 12px 22px; border-radius: 999px; margin-bottom: 26px;
+    box-shadow: 0 0 30px rgba(255,230,0,0.35);
+    animation: badge-breathe 2.4s ease-in-out infinite;
+  }
+  @keyframes badge-breathe{ 0%,100%{ transform: scale(1); } 50%{ transform: scale(1.035); } }
+  .urgency h2{ font-family: var(--font-display); font-weight:800; font-size: clamp(26px,4.6vw,42px); max-width: 18ch; margin: 0 auto 16px; }
+  .urgency p{ color:#d4d4dc; max-width: 50ch; margin: 0 auto 34px; font-size:16px; line-height:1.6; }
+
+  /* ---------- register ---------- */
+  .register-panel{
+    background: var(--panel); border: 1px solid var(--panel-line); border-radius: 22px;
+    padding: 56px 48px; display:grid; grid-template-columns: 1.2fr 0.8fr; gap: 48px; align-items:center;
+    position: relative; overflow:hidden;
+  }
+  .register-panel::after{
+    content:""; position:absolute; width:280px; height:280px; border-radius:50%;
+    background: rgba(34,242,255,0.14); filter: blur(70px); right:-60px; top:-80px; z-index:0;
+  }
+  @media (max-width: 860px){
+    .register-panel{ grid-template-columns: 1fr; padding: 38px 26px; text-align:center; }
+  }
+
+  .register-copy{ position:relative; z-index:1; }
+  .register-copy .eyebrow{ margin-bottom: 14px; }
+  .register-copy h2{ font-family: var(--font-display); font-weight:800; font-size: clamp(26px,4vw,38px); margin:0 0 14px; }
+  .register-copy p{ color:#c9c9d1; font-size:15.5px; line-height:1.6; margin: 0 0 28px; max-width: 44ch; }
+  @media (max-width: 860px){ .register-copy p{ margin-left:auto; margin-right:auto; } }
+
+  .register-qr{
+    position:relative; z-index:1;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap: 14px;
+    background: #0a0a0c; border:1px solid var(--panel-line); border-radius:16px; padding: 26px;
+  }
+  #qr-code{ background:#fff; padding:10px; border-radius:10px; line-height:0; }
+  #qr-code img, #qr-code canvas, #qr-code table{ display:block; }
+  .register-qr span{ font-family: var(--font-mono); font-size:11.5px; color: var(--dim); text-align:center; letter-spacing:0.04em; }
+
+  .form-note{
+    display:flex; align-items:center; gap:8px; margin-top:20px;
+    font-family: var(--font-mono); font-size: 12px; color: var(--dim);
+  }
+  .form-note svg{ width:14px; height:14px; color: var(--green); flex-shrink:0; }
+
+  /* ---------- team ---------- */
+  .team-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:20px; margin-top:36px; }
+  .team-card{ padding:28px 22px; border:1px solid var(--panel-line); border-radius:14px; background:rgba(255,255,255,0.02); text-align:center; }
+  .team-card .role{ font-family:var(--font-mono); font-size:12px; letter-spacing:.08em; color: var(--pink); text-transform:uppercase; margin-bottom:8px; }
+  .team-card h3{ font-family:var(--font-display); font-size:20px; margin:0; }
+
+  /* ---------- footer ---------- */
+  footer{ border-top: 1px solid var(--panel-line); padding: 40px 0; }
+  .footer-inner{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:18px; }
+  .footer-inner p{ margin:0; font-family: var(--font-mono); font-size:12.5px; color: var(--dim); }
+  .footer-links{ display:flex; gap:20px; }
+  .footer-links a{ font-family: var(--font-mono); font-size:12.5px; color: var(--dim); }
+  .footer-links a:hover{ color: var(--white); }
+
+
+
+
+  /* ---------- club overrides ---------- */
+  .club-hero{min-height:calc(100vh - var(--nav-h)); display:flex; align-items:center; position:relative; overflow:hidden; padding:110px 0 90px;}
+  .club-hero .hero-inner{position:relative; z-index:2; width:100%;}
+  .club-hero .hero-title{font-family:var(--font-display); font-size:clamp(48px,10vw,112px); line-height:.95; letter-spacing:-.05em; margin:24px 0 20px; font-weight:900;}
+  .hero-sub{display:flex; gap:12px; flex-wrap:wrap; align-items:center; font-family:var(--font-display); font-size:clamp(18px,2.5vw,30px); font-weight:700; margin:0 0 18px;}
+  .hero-sub .px{color:var(--cyan)} .hero-sub .cx{color:var(--pink)} .hero-sub .x{color:var(--yellow)}
+  .hero-tagline{font-family:var(--font-mono); color:var(--green); font-size:13px; letter-spacing:.05em; margin:0 0 18px;}
+  .hero-desc{max-width:700px; color:#c9c9d1; font-size:17px; line-height:1.7; margin:0 0 24px;}
+  .hero-pills{display:flex; gap:9px; flex-wrap:wrap; margin:0 0 30px;}
+  .hero-pills span{font-family:var(--font-mono); font-size:11px; padding:7px 10px; border:1px solid var(--panel-line); color:#d9d9df; background:rgba(255,255,255,.02);}
+  .cta-row{display:flex; gap:14px; align-items:center; flex-wrap:wrap;}
+  .btn-register{display:inline-flex; align-items:center; justify-content:center; gap:10px; background:var(--yellow); color:#050505; padding:14px 20px; border-radius:4px; font-family:var(--font-mono); font-weight:700; font-size:12px; letter-spacing:.04em; border:1px solid var(--yellow); transition:transform .2s, box-shadow .2s;}
+  .btn-register svg{width:17px;height:17px}.btn-register:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(255,230,0,.18)}
+  .btn-ghost{font-family:var(--font-mono); font-size:12px; color:#c9c9d1; padding:13px 4px;}
+  .kicker-row{font-family:var(--font-mono); font-size:12px; color:var(--dim); letter-spacing:.08em; display:flex; gap:9px; align-items:center;}
+  .kicker-row .dot{width:8px;height:8px;background:var(--pink);box-shadow:0 0 15px var(--pink);border-radius:50%;}
+  .hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:48px 48px;mask-image:linear-gradient(to bottom,black,transparent 80%);}
+  .hero-glow-a,.hero-glow-b{position:absolute;border-radius:50%;filter:blur(70px);pointer-events:none;}
+  .hero-glow-a{width:420px;height:420px;background:rgba(255,46,198,.13);right:-100px;top:8%;}.hero-glow-b{width:360px;height:360px;background:rgba(34,242,255,.10);left:-120px;bottom:-100px;}
+  .marquee-band{overflow:hidden;border-top:1px solid var(--panel-line);border-bottom:1px solid var(--panel-line);padding:14px 0;background:#08080a;white-space:nowrap;}
+  .marquee-track{display:flex;width:max-content;gap:34px;animation:marquee 28s linear infinite;font-family:var(--font-mono);font-size:11px;color:var(--dim);letter-spacing:.08em}.marquee-track .hl{color:var(--yellow)}
+  @keyframes marquee{to{transform:translateX(-50%)}}
+  .section-pad{padding:100px 0}.section-title{font-family:var(--font-display);font-size:clamp(30px,5vw,54px);line-height:1.08;letter-spacing:-.035em;max-width:18ch;margin:0 0 20px}.lede{max-width:700px;color:#b8b8c1;font-size:16px;line-height:1.7;margin:0 0 42px}.eyebrow{font-family:var(--font-mono);color:var(--green);font-size:11px;letter-spacing:.1em;margin:0 0 16px}.club-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:70px;align-items:start}.club-values{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:35px}.club-value{border-top:1px solid var(--panel-line);padding-top:15px}.club-value strong{font-family:var(--font-display);font-size:13px;color:var(--yellow)}.club-value p{color:#aaaab3;font-size:14px;line-height:1.55;margin:9px 0 0}.timeline{border-left:1px solid #2b2b32;padding-left:24px}.timeline-item{position:relative;padding:0 0 34px}.timeline-item:before{content:'';position:absolute;width:7px;height:7px;background:var(--pink);border-radius:50%;left:-28px;top:4px;box-shadow:0 0 12px rgba(255,46,198,.5)}.timeline-item strong{font-family:var(--font-mono);font-size:11px;color:var(--cyan)}.timeline-item h3{font-family:var(--font-display);font-size:20px;margin:10px 0}.timeline-item p{color:#a7a7b0;line-height:1.6;margin:0;font-size:14px}.activities-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.activity-card{background:#0b0b0e;border:1px solid var(--panel-line);padding:28px;min-height:210px;transition:transform .2s,border-color .2s}.activity-card:hover{transform:translateY(-4px);border-color:#35353e}.activity-icon{font-size:24px;color:var(--cyan);font-family:var(--font-mono)}.activity-card h3{font-family:var(--font-display);font-size:15px;margin:24px 0 12px}.activity-card p{color:#a7a7b0;font-size:14px;line-height:1.6;margin:0}.event-feature{position:relative;overflow:hidden;border:1px solid rgba(182,255,46,.35);background:linear-gradient(135deg,#0c0c10,#111108);padding:48px;border-radius:18px}.event-feature:after{content:'';position:absolute;width:320px;height:320px;border-radius:50%;right:-100px;top:-120px;background:rgba(255,46,198,.12);filter:blur(65px)}.event-feature>*{position:relative;z-index:1}.event-status{font-family:var(--font-mono);font-size:11px;color:var(--green);letter-spacing:.08em;margin-bottom:22px}.event-status i{display:inline-block;width:7px;height:7px;background:var(--green);border-radius:50%;margin-right:8px;box-shadow:0 0 12px var(--green)}.event-date{font-family:var(--font-mono);font-size:12px;color:var(--cyan);margin-bottom:14px}.event-feature h3{font-family:var(--font-display);font-size:clamp(25px,4vw,44px);max-width:15ch;margin:0 0 15px}.event-feature p{max-width:650px;color:#c0c0c8;line-height:1.65}.event-meta{display:flex;gap:10px;flex-wrap:wrap;margin:26px 0 30px}.event-meta span{font-family:var(--font-mono);font-size:10px;color:#bdbdc6;border:1px solid var(--panel-line);padding:8px 10px}.join-panel{border:1px solid var(--panel-line);padding:50px;border-radius:18px;background:#0c0c0f}.join-panel p:not(.eyebrow){color:#b9b9c2;line-height:1.65;max-width:650px;margin-bottom:28px}.reveal{opacity:1;transform:none}.reveal.is-visible{opacity:1;transform:none}.scroll-cue{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);font-family:var(--font-mono);font-size:10px;color:var(--dim);display:flex;align-items:center;gap:8px}.scroll-cue .line{width:35px;height:1px;background:#555}
+  @media(max-width:860px){.club-grid{grid-template-columns:1fr;gap:50px}.activities-grid{grid-template-columns:1fr 1fr}.club-hero{padding:90px 0 70px}.event-feature,.join-panel{padding:32px 24px}}
+  @media(max-width:560px){.wrap{padding:0 18px}.section-pad{padding:70px 0}.club-hero .hero-title{font-size:clamp(42px,14vw,70px)}.hero-desc{font-size:15px}.activities-grid,.club-values{grid-template-columns:1fr}.cta-row{align-items:stretch;flex-direction:column}.btn-register{text-align:center}.scroll-cue{display:none}.event-feature h3{font-size:26px}}
+</style>
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to content</a>
+<div class="grain" aria-hidden="true"></div>
+<header class="site-nav">
+  <div class="nav-inner">
+    <a href="#top" class="brand">
+      <img class="brand-logo" src="assets/logo.png" alt="Trigger Mind Club logo"
+           onerror="this.hidden=true; this.nextElementSibling.hidden=false;">
+      TRIGGER MIND <small>CLUB</small>
+    </a>
+    <nav class="primary-links" aria-label="Primary">
+      <a href="#about">ABOUT</a>
+      <a href="#team">TEAM</a>
+      <a href="#activities">ACTIVITIES</a>
+      <a href="#upcoming">UPCOMING</a>
+      <a href="#join" class="nav-register">JOIN US</a>
+    </nav>
+    <button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="mobilePanel" aria-label="Open menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<div class="mobile-panel" id="mobilePanel">
+  <a href="#about">ABOUT</a>
+  <a href="#team">TEAM</a>
+  <a href="#activities">ACTIVITIES</a>
+  <a href="#upcoming">UPCOMING EVENT</a>
+  <a href="#join" class="nav-register">JOIN THE CLUB</a>
+</div>
+
+<main id="main">
+  <section class="hero club-hero" id="top">
+    <div class="hero-glow-a" aria-hidden="true"></div><div class="hero-glow-b" aria-hidden="true"></div><div class="hero-grid" aria-hidden="true"></div>
+    <div class="wrap hero-inner">
+      <div class="kicker-row"><span class="dot" aria-hidden="true"></span> WELCOME TO THE CLUB</div>
+      <h1 class="hero-title" id="glitchTitle">TRIGGER MIND</h1>
+      <p class="hero-sub"><span class="px">THINK</span><span class="x">×</span><span class="cx">CREATE</span><span class="x">×</span><span class="px">CONNECT</span></p>
+      <p class="hero-tagline">// WHERE IDEAS TURN INTO EXPERIENCES.</p>
+      <p class="hero-desc">TRIGGER MIND is a student-led club built around creativity, technology, pop culture and collaboration. We bring people together to learn, build, compete and create experiences worth remembering.</p>
+      <div class="hero-pills"><span>TECH</span><span>CREATIVE</span><span>EVENTS</span><span>COMMUNITY</span><span>COMPETITIONS</span></div>
+      <div class="cta-row"><a href="#upcoming" class="btn-register">EXPLORE THE CLUB <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a><a href="#about" class="btn-ghost">Discover what we do ↓</a></div>
+    </div>
+    <div class="scroll-cue" aria-hidden="true"><span class="line"></span> SCROLL</div>
+  </section>
+
+  <div class="marquee-band" role="presentation" aria-hidden="true"><div class="marquee-track"><span>TRIGGER MIND CLUB</span><span class="hl">THINK × CREATE × CONNECT</span><span>TECH</span><span>CREATIVITY</span><span>COMMUNITY</span><span>EVENTS</span><span>TRIGGER MIND CLUB</span><span class="hl">THINK × CREATE × CONNECT</span><span>TECH</span><span>CREATIVITY</span><span>COMMUNITY</span><span>EVENTS</span></div></div>
+
+  <section class="section-pad" id="about">
+    <div class="wrap club-grid">
+      <div class="reveal"><p class="eyebrow">// WHO WE ARE</p><h2 class="section-title">More than a club. A space to make things happen.</h2><p class="lede">TRIGGER MIND brings curious students together around technology, creativity and culture. Whether you're into coding, design, media, gaming, problem-solving or organizing events, there's room to contribute.</p>
+        <div class="club-values">
+          <div class="club-value"><strong>BUILD</strong><p>Turn ideas into projects, prototypes and real experiences.</p></div>
+          <div class="club-value"><strong>LEARN</strong><p>Workshops, challenges and peer-to-peer learning without the boring stuff.</p></div>
+          <div class="club-value"><strong>COMPETE</strong><p>Take on quizzes, hackathons, challenges and creative competitions.</p></div>
+          <div class="club-value"><strong>CONNECT</strong><p>Meet people with different skills, interests and perspectives.</p></div>
+        </div>
+      </div>
+      <div class="reveal"><p class="eyebrow">// THE CLUB MINDSET</p><div class="timeline"><div class="timeline-item"><strong>01 — IDEAS</strong><h3>Bring the weird idea.</h3><p>You don't need a perfect plan. Bring curiosity and we'll figure out the rest.</p></div><div class="timeline-item"><strong>02 — PEOPLE</strong><h3>Find your people.</h3><p>Collaborate across coding, design, content, management and every skill in between.</p></div><div class="timeline-item"><strong>03 — ACTION</strong><h3>Make it real.</h3><p>Projects, events and challenges give ideas a place to become something tangible.</p></div></div></div>
+    </div>
+  </section>
+
+  <section class="section-pad" id="team">
+    <div class="wrap">
+      <p class="eyebrow reveal">// LEADERSHIP</p>
+      <h2 class="section-title reveal">The people behind TRIGGER MIND.</h2>
+      <div class="team-grid">
+        <div class="team-card reveal"><p class="role">President</p><h3>Shagun Sharma</h3></div>
+        <div class="team-card reveal"><p class="role">Vice President</p><h3>Ram Krishnatrey</h3></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-pad" id="activities" style="background:#08080a;border-top:1px solid var(--panel-line);border-bottom:1px solid var(--panel-line);">
+    <div class="wrap"><p class="eyebrow reveal">// WHAT WE DO</p><h2 class="section-title reveal">A club built for people who don't sit still.</h2><p class="lede reveal">From technical challenges to creative showcases, our activities are designed to get members involved rather than just watching from the sidelines.</p>
+      <div class="activities-grid">
+        <article class="activity-card reveal"><span class="activity-icon">⌘</span><h3>TECH & CODING</h3><p>Problem-solving sessions, coding challenges, project builds and tech-focused workshops.</p></article>
+        <article class="activity-card reveal"><span class="activity-icon">✦</span><h3>CREATIVE MEDIA</h3><p>Design, video, content, storytelling and visual experiments for people who think differently.</p></article>
+        <article class="activity-card reveal"><span class="activity-icon">⚡</span><h3>COMPETITIONS</h3><p>Quizzes, hackathons, challenges and themed competitions that put your skills to work.</p></article>
+        <article class="activity-card reveal"><span class="activity-icon">◉</span><h3>EVENTS</h3><p>High-energy campus experiences, showcases, meetups and community-driven events.</p></article>
+        <article class="activity-card reveal"><span class="activity-icon">↗</span><h3>COLLABORATION</h3><p>Team up with students, clubs and communities to build bigger ideas together.</p></article>
+        <article class="activity-card reveal"><span class="activity-icon">?</span><h3>EXPERIMENT</h3><p>Try something new, fail fast, learn and turn the next version into something better.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-pad" id="upcoming">
+    <div class="wrap"><p class="eyebrow reveal">// NEXT UP</p><h2 class="section-title reveal">Upcoming event.</h2><p class="lede reveal">Keep this section updated whenever the club announces its next event.</p>
+      <div class="event-feature reveal">
+        <div class="event-status"><i></i> REGISTRATION / DETAILS COMING SOON</div>
+        <div class="event-date">NEXT EVENT · DATE TO BE ANNOUNCED</div>
+        <h3>YOUR NEXT TRIGGER MIND EXPERIENCE</h3>
+        <p>Something new is loading. Watch this space for the next competition, workshop, meetup or club experience.</p>
+        <div class="event-meta"><span>DATE: TBA</span><span>VENUE: TBA</span><span>OPEN TO: MEMBERS + GUESTS</span></div>
+        <a href="#join" class="btn-register">GET EVENT UPDATES <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-pad" id="join" style="background:#08080a;border-top:1px solid var(--panel-line);">
+    <div class="wrap"><div class="join-panel reveal"><p class="eyebrow">// BECOME PART OF IT</p><h2 class="section-title">Got an idea? Bring it to TRIGGER MIND.</h2><p>Join the club, meet the community and help shape what we build next. Replace this button with your official club registration or community link.</p><a href="#" class="btn-register" onclick="return false;">JOIN THE CLUB <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div></div>
+  </section>
+</main>
+
+<footer><div class="wrap footer-inner"><div class="footer-brand"><img class="footer-logo" src="assets/logo.png" alt="" onerror="this.remove();"><p>TRIGGER MIND · THINK × CREATE × CONNECT</p></div><div class="footer-links"><a href="#about">About</a><a href="#activities">Activities</a><a href="#upcoming">Upcoming</a><a href="#join">Join</a></div></div></footer>
+
+<script>
+(function(){var toggle=document.getElementById('menuToggle'),panel=document.getElementById('mobilePanel');function closeMenu(){panel.classList.remove('open');toggle.setAttribute('aria-expanded','false');toggle.setAttribute('aria-label','Open menu')}toggle.addEventListener('click',function(){var isOpen=panel.classList.toggle('open');toggle.setAttribute('aria-expanded',String(isOpen));toggle.setAttribute('aria-label',isOpen?'Close menu':'Open menu')});panel.querySelectorAll('a').forEach(function(a){a.addEventListener('click',closeMenu)});document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMenu()})})();
+(function(){var items=document.querySelectorAll('.reveal');if(!('IntersectionObserver' in window)){items.forEach(function(el){el.classList.add('is-visible')});return}var io=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){entry.target.classList.add('is-visible');io.unobserve(entry.target)}})},{threshold:.15,rootMargin:'0px 0px -40px 0px'});items.forEach(function(el){io.observe(el)})})();
+(function(){var title=document.getElementById('glitchTitle');if(!title)return;var text=title.textContent,chars='!<>-_\\/[]{}—=+*^?#';title.setAttribute('aria-label',text);title.textContent='';var frame=0,totalFrames=14,interval=setInterval(function(){frame++;var out='',revealCount=Math.floor((frame/totalFrames)*text.length);for(var i=0;i<text.length;i++){if(text[i]===' '){out+=' ';continue}out+=i<revealCount?text[i]:chars[Math.floor(Math.random()*chars.length)]}title.textContent=out;if(frame>=totalFrames){clearInterval(interval);title.textContent=text}},55)})();
+</script>
+</body>

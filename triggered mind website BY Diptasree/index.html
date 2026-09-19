@@ -1,0 +1,798 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Triggered Mind</title>
+  <meta name="description" content="Triggered Mind club website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #050505;
+      --bg-soft: #0d0d12;
+      --panel: #111318;
+      --panel-strong: #171b23;
+      --border: rgba(255,255,255,0.12);
+      --pink: #ff4ed6;
+      --cyan: #36d8ff;
+      --yellow: #ffc537;
+      --green: #b3ff4f;
+      --white: #f4f4f2;
+      --muted: #b0b0bc;
+      --shadow: rgba(255, 78, 214, 0.25);
+      --font-display: 'Unbounded', sans-serif;
+      --font-ui: 'Space Grotesk', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--white);
+      font-family: var(--font-ui);
+      overflow-x: hidden;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at top left, rgba(255, 78, 214, 0.08), transparent 30%), radial-gradient(circle at bottom right, rgba(54, 216, 255, 0.08), transparent 30%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+    button { font: inherit; }
+
+    .wrap {
+      width: min(1200px, calc(100% - 32px));
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(12px);
+      background: rgba(5, 5, 5, 0.75);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .nav-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 72px;
+      gap: 20px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .brand img {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      box-shadow: 0 0 15px rgba(255, 78, 214, 0.3);
+      background: rgba(255,255,255,0.08);
+      padding: 3px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      transition: color 0.2s ease;
+    }
+
+    .nav-links a:hover,
+    .nav-links a:focus-visible {
+      color: var(--white);
+    }
+
+    .nav-cta {
+      padding: 10px 16px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: linear-gradient(135deg, var(--pink), var(--cyan));
+      color: #050505;
+      border-radius: 999px;
+      font-weight: 700;
+      box-shadow: 0 0 18px rgba(255, 78, 214, 0.24);
+    }
+
+    .hero {
+      padding: 56px 0 46px;
+      min-height: 720px;
+      display: flex;
+      align-items: center;
+    }
+
+    .hero-inner {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 28px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin: 0 0 18px;
+      display: inline-block;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: clamp(3rem, 8vw, 7rem);
+      line-height: 0.92;
+      letter-spacing: -0.06em;
+      text-transform: uppercase;
+      max-width: 600px;
+    }
+
+    .highlight {
+      display: inline-block;
+      color: var(--pink);
+      text-shadow: 0 0 18px rgba(255, 78, 214, 0.25);
+    }
+
+    .subhead {
+      margin: 18px 0 0;
+      font-size: clamp(1.1rem, 2vw, 1.65rem);
+      color: var(--muted);
+      max-width: 54ch;
+      line-height: 1.7;
+    }
+
+    .hero-visual {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .logo-shell {
+      position: relative;
+      width: min(460px, 82vw);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      border: 10px solid rgba(255,255,255,0.75);
+      background: rgba(255,255,255,0.02);
+      box-shadow: 0 0 0 18px rgba(255,255,255,0.016), 0 0 40px rgba(255,78,214,0.18);
+    }
+
+    .logo-shell::before,
+    .logo-shell::after {
+      content: "";
+      position: absolute;
+      inset: 12%;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 50%;
+    }
+
+    .logo-shell::after {
+      inset: 28%;
+      border-style: dashed;
+      opacity: 0.7;
+    }
+
+    .brand-logo {
+      width: 74%;
+      border-radius: 50%;
+      filter: drop-shadow(0 0 24px rgba(255, 78, 214, 0.14));
+    }
+
+    .section {
+      padding: 50px 0;
+    }
+
+    .section-title {
+      margin: 0 0 16px;
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      line-height: 1.08;
+      letter-spacing: -0.05em;
+      text-transform: uppercase;
+    }
+
+    .lead {
+      margin: 0;
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.8;
+      max-width: 60ch;
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 28px;
+      align-items: center;
+    }
+
+    .about-card,
+    .leader-card,
+    .team-card,
+    .event-card,
+    .upcoming-card,
+    .social-card {
+      background: rgba(17, 19, 24, 0.9);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .about-card {
+      padding: 26px;
+    }
+
+    .about-card p {
+      margin: 0;
+      color: var(--white);
+      font-size: 1.05rem;
+      line-height: 1.8;
+      max-width: 54ch;
+    }
+
+    .leaders-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 26px;
+      margin-top: 26px;
+    }
+
+    .leader-card {
+      position: relative;
+      padding: 28px 22px 18px;
+      text-align: center;
+      min-height: 300px;
+      display: flex;
+      flex-direction: column;
+      justify-content: end;
+    }
+
+    .leader-avatar {
+      position: absolute;
+      top: -42px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.03));
+      border: 3px solid var(--white);
+      box-shadow: 0 0 22px rgba(54, 216, 255, 0.12);
+    }
+
+    .leader-name {
+      margin: 0 0 8px;
+      font-family: var(--font-display);
+      font-size: clamp(1.5rem, 2vw, 2.1rem);
+      letter-spacing: -0.05em;
+      text-transform: uppercase;
+    }
+
+    .leader-role {
+      margin: 0;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+    }
+
+    .team-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .team-row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .team-card {
+      min-height: 220px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      background: linear-gradient(180deg, rgba(17,19,24,0.8), rgba(7,7,11,0.95));
+      border-style: dashed;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .team-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .team-card .team-label {
+      position: absolute;
+      inset: auto 10px 10px 10px;
+      background: rgba(5, 5, 5, 0.62);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      color: var(--white);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      text-align: center;
+      padding: 8px 10px;
+      backdrop-filter: blur(4px);
+    }
+
+    .event-shell {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 24px;
+      margin-top: 26px;
+    }
+
+    .event-card {
+      padding: 26px;
+    }
+
+    .event-card h3 {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 3rem);
+      line-height: 1.05;
+      font-family: var(--font-display);
+      letter-spacing: -0.05em;
+      text-transform: uppercase;
+    }
+
+    .event-card p {
+      margin: 16px 0 0;
+      color: var(--muted);
+      line-height: 1.8;
+      font-size: 1rem;
+    }
+
+    .event-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 22px;
+      border: none;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--yellow), var(--pink));
+      color: #111;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 13px 22px;
+      cursor: pointer;
+      box-shadow: 0 0 18px rgba(255, 197, 55, 0.22);
+    }
+
+    .event-details {
+      display: none;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    .event-details.open {
+      display: block;
+    }
+
+    .photo-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .photo-box {
+      min-height: 130px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, rgba(255,78,214,0.08), rgba(54,216,255,0.08));
+      color: var(--muted);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .upcoming-card {
+      padding: 30px;
+      margin-top: 26px;
+      display: grid;
+      place-items: center;
+      min-height: 220px;
+      text-align: center;
+    }
+
+    .coming-soon {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 3rem);
+      text-transform: uppercase;
+      letter-spacing: -0.04em;
+      margin: 0;
+    }
+
+    .upcoming-button {
+      margin-top: 18px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--white);
+      padding: 12px 20px;
+      border-radius: 999px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    .social-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 26px;
+    }
+
+    .social-card {
+      min-height: 120px;
+      border-style: dashed;
+      background: rgba(17, 19, 24, 0.45);
+    }
+
+    .notice {
+      position: fixed;
+      inset: 0;
+      background: rgba(5,5,5,0.68);
+      backdrop-filter: blur(6px);
+      display: none;
+      place-items: center;
+      z-index: 100;
+    }
+
+    .notice.open {
+      display: grid;
+    }
+
+    .notice-box {
+      width: min(420px, calc(100% - 32px));
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 30px 24px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+      position: relative;
+    }
+
+    .notice-box h3 {
+      margin: 0 0 16px;
+      font-family: var(--font-display);
+      font-size: clamp(1.7rem, 4vw, 2.7rem);
+      text-transform: uppercase;
+      letter-spacing: -0.05em;
+    }
+
+    .notice-box p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    .notice-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      color: var(--white);
+      cursor: pointer;
+    }
+
+    @media (max-width: 860px) {
+      .hero-inner,
+      .about-grid,
+      .event-shell {
+        grid-template-columns: 1fr;
+      }
+
+      .team-row,
+      .photo-row,
+      .social-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .nav-links {
+        display: none;
+      }
+
+      .leaders-grid,
+      .team-row,
+      .photo-row,
+      .social-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .leader-avatar {
+        width: 96px;
+        height: 96px;
+      }
+
+      .section {
+        padding: 38px 0;
+      }
+
+      .hero {
+        padding-top: 40px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap nav-bar">
+      <a href="#intro" class="brand" aria-label="Triggered Mind home">
+        <img src="logonobg.PNG" alt="Triggered Mind logo" />
+        <span>Triggered Mind</span>
+      </a>
+      <nav class="nav-links" aria-label="Main navigation">
+        <a href="#intro">Introduction</a>
+        <a href="#about">About</a>
+        <a href="#leaders">Leaders</a>
+        <a href="#team">Team</a>
+        <a href="#events">Event</a>
+        <a href="#upcoming">Upcoming</a>
+        <a href="#social">Socials</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="intro">
+      <div class="wrap hero-inner">
+        <div>
+          <p class="eyebrow">Triggered Mind</p>
+          <h1><span class="highlight">Triggered</span> Mind</h1>
+          <p class="subhead">
+            A club where curiosity turns into conversations, ideas become projects, and passion becomes action.
+          </p>
+        </div>
+
+        <div class="hero-visual" aria-label="Triggered Mind club logo">
+          <div class="logo-shell">
+            <img src="logonobg.PNG" alt="Triggered Mind logo" class="brand-logo" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="about">
+      <div class="wrap">
+        <div class="about-grid">
+          <div>
+            <p class="eyebrow">About</p>
+            <h2 class="section-title">Triggered Mind</h2>
+          </div>
+          <div class="about-card">
+            <p>Your passion, discussion and arguements turning into the a projects and compitition.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="leaders">
+      <div class="wrap">
+        <p class="eyebrow">Leaders</p>
+        <h2 class="section-title">Our Leadership</h2>
+        <div class="leaders-grid">
+          <div class="leader-card">
+            <div class="leader-avatar" aria-hidden="true"></div>
+            <div>
+              <h3 class="leader-name">Shagun Sharma</h3>
+              <p class="leader-role">President</p>
+            </div>
+          </div>
+
+          <div class="leader-card">
+            <div class="leader-avatar" aria-hidden="true"></div>
+            <div>
+              <h3 class="leader-name">Ram Krishnatrey</h3>
+              <p class="leader-role">Vice President</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="team">
+      <div class="wrap">
+        <div class="team-header">
+          <div>
+            <p class="eyebrow">Team</p>
+            <h2 class="section-title">Our Team</h2>
+          </div>
+        </div>
+
+        <div class="team-row">
+          <div class="team-card">
+            <img src="team-1.jpg" alt="Triggered Mind team photo 1" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+            <span class="team-label" style="display:none;">Team Photo 1</span>
+          </div>
+          <div class="team-card">
+            <img src="team-2.jpg" alt="Triggered Mind team photo 2" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+            <span class="team-label" style="display:none;">Team Photo 2</span>
+          </div>
+          <div class="team-card">
+            <img src="team-3.jpg" alt="Triggered Mind team photo 3" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+            <span class="team-label" style="display:none;">Team Photo 3</span>
+          </div>
+          <div class="team-card">
+            <img src="team-4.jpg" alt="Triggered Mind team photo 4" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+            <span class="team-label" style="display:none;">Team Photo 4</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="events">
+      <div class="wrap">
+        <p class="eyebrow">Event</p>
+        <h2 class="section-title">Featured Event</h2>
+
+        <div class="event-shell">
+          <div class="event-card">
+            <h3>PopCulture.exe</h3>
+            <p>
+              A fun and creative pop-culture challenge that brings together fandom, wit, and excitement in a competitive experience.
+            </p>
+            <button class="event-button" type="button" data-toggle="event-details">Know More</button>
+
+            <div class="event-details" id="event-details">
+              <div class="photo-row">
+                <div class="photo-box">Image 1</div>
+                <div class="photo-box">Image 2</div>
+                <div class="photo-box">Image 3</div>
+              </div>
+              <p>
+                PopCulture.exe is designed to test your quick-thinking, creativity, and connection with pop culture in a dynamic club event format.
+              </p>
+            </div>
+          </div>
+
+          <div class="event-card">
+            <p class="eyebrow">Event Info</p>
+            <p>Theme: Pop culture and fun challenges</p>
+            <p>Format: Club event experience</p>
+            <p>Audience: Students and enthusiasts</p>
+            <p>Goal: Participation, engagement, and excitement</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="upcoming">
+      <div class="wrap">
+        <p class="eyebrow">Upcoming</p>
+        <h2 class="section-title">Upcoming Events</h2>
+
+        <div class="upcoming-card">
+          <p class="coming-soon">Coming Soon</p>
+          <button class="upcoming-button" type="button" data-open="notice">View Update</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="social">
+      <div class="wrap">
+        <p class="eyebrow">Social Media</p>
+        <h2 class="section-title">Connect With Us</h2>
+
+        <div class="social-grid" aria-label="Social media placeholders">
+          <div class="social-card" aria-hidden="true"></div>
+          <div class="social-card" aria-hidden="true"></div>
+          <div class="social-card" aria-hidden="true"></div>
+          <div class="social-card" aria-hidden="true"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="notice" id="notice" aria-hidden="true">
+    <div class="notice-box" role="dialog" aria-modal="true" aria-labelledby="notice-title">
+      <button class="notice-close" type="button" data-close="notice" aria-label="Close">×</button>
+      <h3 id="notice-title">Coming Soon</h3>
+      <p>Our upcoming event details will be announced very soon.</p>
+    </div>
+  </div>
+
+  <script>
+    const eventToggle = document.querySelector('[data-toggle="event-details"]');
+    const eventDetails = document.getElementById('event-details');
+
+    if (eventToggle && eventDetails) {
+      eventToggle.addEventListener('click', () => {
+        const isOpen = eventDetails.classList.toggle('open');
+        eventToggle.textContent = isOpen ? 'Hide Details' : 'Know More';
+      });
+    }
+
+    const notice = document.getElementById('notice');
+    const noticeOpen = document.querySelector('[data-open="notice"]');
+    const noticeClose = document.querySelector('[data-close="notice"]');
+
+    function openNotice() {
+      if (!notice) return;
+      notice.classList.add('open');
+      notice.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeNotice() {
+      if (!notice) return;
+      notice.classList.remove('open');
+      notice.setAttribute('aria-hidden', 'true');
+    }
+
+    if (noticeOpen) noticeOpen.addEventListener('click', openNotice);
+    if (noticeClose) noticeClose.addEventListener('click', closeNotice);
+
+    if (notice) {
+      notice.addEventListener('click', (event) => {
+        if (event.target === notice) closeNotice();
+      });
+
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') closeNotice();
+      });
+    }
+  </script>
+</body>
+</html>
